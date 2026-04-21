@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>UI Spark - Modern UI Showcase</title>
+    <meta name="description" content="A small static website showcasing modern UI patterns with interactive JavaScript.">
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body data-theme="dark">
+    <div class="site-shell">
+        <header class="site-header">
+            <a class="brand" href="#top">
+                <span class="brand__mark">UI</span>
+                <span class="brand__text">Spark</span>
+            </a>
+
+            <nav class="site-nav" aria-label="Primary">
+                <a href="#features">Features</a>
+                <a href="#workspace">Workspace</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#faq">FAQ</a>
+            </nav>
+
+            <div class="header-actions">
+                <button class="ghost-button" type="button" data-theme-toggle aria-pressed="false">
+                    Toggle theme
+                </button>
+                <button class="primary-button" type="button" data-open-modal>
+                    Open preview
+                </button>
+            </div>
+        </header>
+
+        <main id="top">
+            <section class="hero">
+                <div class="hero__copy">
+                    <p class="eyebrow">Static demo, dynamic feel</p>
+                    <h1>Modern website patterns in one small showcase.</h1>
+                    <p class="hero__lede">
+                        Explore cards, filtering, tabs, animated metrics, pricing toggles, accordions,
+                        a modal, and lightweight notifications without any framework.
+                    </p>
+
+                    <div class="hero__actions">
+                        <a class="primary-button" href="#features">Explore features</a>
+                        <button class="ghost-button" type="button" data-toast-trigger="This is a lightweight toast notification.">
+                            Trigger toast
+                        </button>
+                    </div>
+
+                    <dl class="metric-row">
+                        <div class="metric-tile">
+                            <dt>Components</dt>
+                            <dd data-counter="12">0</dd>
+                        </div>
+                        <div class="metric-tile">
+                            <dt>Interactions</dt>
+                            <dd data-counter="8">0</dd>
+                        </div>
+                        <div class="metric-tile">
+                            <dt>Dependencies</dt>
+                            <dd data-counter="0">0</dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <div class="hero__visual" aria-hidden="true">
+                    <div class="preview-card preview-card--primary">
+                        <span class="preview-pill">Live activity</span>
+                        <strong>Dashboard refresh complete</strong>
+                        <p>All widgets are synced and ready for interaction.</p>
+                    </div>
+                    <div class="preview-card">
+                        <span class="preview-pill preview-pill--accent">Automation</span>
+                        <strong>Weekly summary</strong>
+                        <p>46 tasks completed, 3 pending approvals, 98% uptime.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="features" class="section">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">Interactive gallery</p>
+                        <h2>Filter common UI building blocks.</h2>
+                    </div>
+                    <label class="search-field">
+                        <span class="visually-hidden">Search features</span>
+                        <input type="search" placeholder="Search components..." data-search>
+                    </label>
+                </div>
+
+                <div class="filter-bar" role="toolbar" aria-label="Feature filters">
+                    <button type="button" class="chip is-active" data-filter="all">All</button>
+                    <button type="button" class="chip" data-filter="engagement">Engagement</button>
+                    <button type="button" class="chip" data-filter="commerce">Commerce</button>
+                    <button type="button" class="chip" data-filter="analytics">Analytics</button>
+                </div>
+
+                <div class="card-grid" data-feature-grid>
+                    <article class="feature-card" data-category="engagement" data-name="Notification toasts and alerts">
+                        <span class="feature-card__tag">Engagement</span>
+                        <h3>Toast notifications</h3>
+                        <p>Short, timed feedback for actions like saves, shares, and updates.</p>
+                    </article>
+                    <article class="feature-card" data-category="analytics" data-name="Animated counters and stats">
+                        <span class="feature-card__tag">Analytics</span>
+                        <h3>Animated counters</h3>
+                        <p>Quickly draw attention to important KPI values and usage metrics.</p>
+                    </article>
+                    <article class="feature-card" data-category="commerce" data-name="Pricing switchers and plans">
+                        <span class="feature-card__tag">Commerce</span>
+                        <h3>Pricing switcher</h3>
+                        <p>Swap monthly and yearly plans without a reload to compare value.</p>
+                    </article>
+                    <article class="feature-card" data-category="engagement" data-name="Modal previews and overlays">
+                        <span class="feature-card__tag">Engagement</span>
+                        <h3>Modal preview</h3>
+                        <p>Focus users on key content, onboarding steps, or confirmation flows.</p>
+                    </article>
+                    <article class="feature-card" data-category="analytics" data-name="Segmented tabs for dashboards">
+                        <span class="feature-card__tag">Analytics</span>
+                        <h3>Tabbed workspaces</h3>
+                        <p>Organize dense content into manageable views without leaving the page.</p>
+                    </article>
+                    <article class="feature-card" data-category="commerce" data-name="Accordions for product questions">
+                        <span class="feature-card__tag">Commerce</span>
+                        <h3>Accordion FAQ</h3>
+                        <p>Keep long pages compact while letting visitors expand what matters.</p>
+                    </article>
+                </div>
+
+                <p class="empty-state hidden" data-empty-state>No components match your search.</p>
+            </section>
+
+            <section id="workspace" class="section section--split">
+                <div>
+                    <p class="eyebrow">Workspace</p>
+                    <h2>Tabbed interface for different product surfaces.</h2>
+                    <p class="section-copy">
+                        Switch between three example layouts to showcase a typical dashboard, team inbox,
+                        and checkout summary.
+                    </p>
+                </div>
+
+                <div class="workspace-panel">
+                    <div class="tab-list" role="tablist" aria-label="Workspace tabs">
+                        <button type="button" class="tab is-active" role="tab" aria-selected="true" aria-controls="tab-dashboard" id="control-dashboard" data-tab-target="dashboard">
+                            Dashboard
+                        </button>
+                        <button type="button" class="tab" role="tab" aria-selected="false" aria-controls="tab-inbox" id="control-inbox" data-tab-target="inbox">
+                            Inbox
+                        </button>
+                        <button type="button" class="tab" role="tab" aria-selected="false" aria-controls="tab-checkout" id="control-checkout" data-tab-target="checkout">
+                            Checkout
+                        </button>
+                    </div>
+
+                    <section class="tab-panel is-active" role="tabpanel" id="tab-dashboard" aria-labelledby="control-dashboard" data-tab-panel="dashboard">
+                        <div class="mini-grid">
+                            <article class="mini-card">
+                                <span>Conversion</span>
+                                <strong>4.8%</strong>
+                                <div class="progress"><span style="width: 72%"></span></div>
+                            </article>
+                            <article class="mini-card">
+                                <span>Team velocity</span>
+                                <strong>91 pts</strong>
+                                <div class="progress"><span style="width: 84%"></span></div>
+                            </article>
+                            <article class="mini-card">
+                                <span>Support SLA</span>
+                                <strong>97%</strong>
+                                <div class="progress"><span style="width: 97%"></span></div>
+                            </article>
+                        </div>
+                    </section>
+
+                    <section class="tab-panel" role="tabpanel" id="tab-inbox" aria-labelledby="control-inbox" data-tab-panel="inbox" hidden>
+                        <div class="message-list">
+                            <article class="message-card">
+                                <strong>Design review</strong>
+                                <p>Navigation update is ready for sign-off.</p>
+                            </article>
+                            <article class="message-card">
+                                <strong>Customer feedback</strong>
+                                <p>Users want saved filters and clearer checkout steps.</p>
+                            </article>
+                            <article class="message-card">
+                                <strong>Release note</strong>
+                                <p>Feature flags synced across staging and production.</p>
+                            </article>
+                        </div>
+                    </section>
+
+                    <section class="tab-panel" role="tabpanel" id="tab-checkout" aria-labelledby="control-checkout" data-tab-panel="checkout" hidden>
+                        <div class="checkout-card">
+                            <div class="checkout-row">
+                                <span>Starter plan</span>
+                                <strong>$24</strong>
+                            </div>
+                            <div class="checkout-row">
+                                <span>Automation add-on</span>
+                                <strong>$8</strong>
+                            </div>
+                            <div class="checkout-row checkout-row--total">
+                                <span>Total</span>
+                                <strong>$32</strong>
+                            </div>
+                            <button class="primary-button" type="button" data-toast-trigger="Checkout demo: payment flow would continue here.">
+                                Continue
+                            </button>
+                        </div>
+                    </section>
+                </div>
+            </section>
+
+            <section id="pricing" class="section">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">Pricing toggle</p>
+                        <h2>Show an interactive billing switch.</h2>
+                    </div>
+
+                    <label class="billing-toggle">
+                        <span>Monthly</span>
+                        <input type="checkbox" data-billing-toggle>
+                        <span class="billing-toggle__track" aria-hidden="true"></span>
+                        <span>Yearly</span>
+                    </label>
+                </div>
+
+                <div class="pricing-grid">
+                    <article class="pricing-card">
+                        <h3>Starter</h3>
+                        <p>Best for side projects and single-page products.</p>
+                        <strong class="price" data-monthly="$12" data-yearly="$9">$12</strong>
+                        <span class="price-caption" data-price-caption>per month</span>
+                    </article>
+                    <article class="pricing-card pricing-card--featured">
+                        <span class="feature-badge">Most popular</span>
+                        <h3>Growth</h3>
+                        <p>For teams shipping polished interfaces every week.</p>
+                        <strong class="price" data-monthly="$24" data-yearly="$19">$24</strong>
+                        <span class="price-caption" data-price-caption>per month</span>
+                    </article>
+                    <article class="pricing-card">
+                        <h3>Scale</h3>
+                        <p>Advanced controls, analytics, and team workflows.</p>
+                        <strong class="price" data-monthly="$48" data-yearly="$39">$48</strong>
+                        <span class="price-caption" data-price-caption>per month</span>
+                    </article>
+                </div>
+            </section>
+
+            <section id="faq" class="section">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">Accordion</p>
+                        <h2>FAQ patterns visitors expect.</h2>
+                    </div>
+                </div>
+
+                <div class="faq-list">
+                    <article class="faq-item">
+                        <button class="faq-question" type="button" aria-expanded="false">
+                            Is this site framework-free?
+                        </button>
+                        <div class="faq-answer" hidden>
+                            <p>Yes. Everything here is built with plain HTML, CSS, and JavaScript.</p>
+                        </div>
+                    </article>
+                    <article class="faq-item">
+                        <button class="faq-question" type="button" aria-expanded="false">
+                            Does the theme selection persist?
+                        </button>
+                        <div class="faq-answer" hidden>
+                            <p>It does. The current mode is stored locally so refreshes keep the same theme.</p>
+                        </div>
+                    </article>
+                    <article class="faq-item">
+                        <button class="faq-question" type="button" aria-expanded="false">
+                            Can I adapt this as a portfolio or product landing page?
+                        </button>
+                        <div class="faq-answer" hidden>
+                            <p>Yes. The structure is intentionally simple so you can swap content or add new sections quickly.</p>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="toast-region" aria-live="polite" aria-atomic="true" data-toast-region></div>
+
+    <div class="modal hidden" data-modal aria-hidden="true">
+        <div class="modal__backdrop" data-close-modal></div>
+        <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+            <button class="modal__close" type="button" data-close-modal aria-label="Close preview">
+                ×
+            </button>
+            <p class="eyebrow">Preview modal</p>
+            <h2 id="modal-title">A lightweight overlay for focused tasks.</h2>
+            <p>
+                Modals are useful for confirmations, quick previews, and onboarding checkpoints
+                when you need visitors to stay in context.
+            </p>
+            <button class="primary-button" type="button" data-toast-trigger="Preview modal action completed.">
+                Run sample action
+            </button>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
