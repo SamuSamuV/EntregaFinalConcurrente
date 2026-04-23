@@ -6,13 +6,12 @@
 
 namespace argb
 {
-    // --- CORREGIDO: SOLO 2 PARÁMETROS ---
+    // --- 2 PARÁMETROS EXACTOS ---
     bool LuaServerApplication::RequestHandler::process(const HttpRequest& request, HttpResponse& response)
     {
         if (get_state() == State::NOT_STARTED)
         {
             set_state_running();
-
             current_request = &request;
             current_response = &response;
 

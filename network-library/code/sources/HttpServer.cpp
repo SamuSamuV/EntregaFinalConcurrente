@@ -63,7 +63,7 @@ namespace argb
                 connections.emplace(socket_handle, std::move(context));
             }
         }
-        catch (const NetworkException& exception) { cout << "Error accepting new connection: " << exception << endl; }
+        catch (const NetworkException& exception) { cout << "Error: " << exception << endl; }
     }
 
     void HttpServer::transfer_data()
@@ -131,7 +131,7 @@ namespace argb
                     HttpResponse* res = &context.response;
                     auto* h = &(*context.handler);
 
-                    // --- EXACTAMENTE 2 ARGUMENTOS PASADOS AL PROCESS ---
+                    // --- LLAMADA A PROCESS CON 2 PARÁMETROS EN EL POOL ---
                     if (h->requires_exclusive_thread()) {
                         context.handler_future = thread_pool.enqueue_exclusive(0, [h, req, res]() { return h->process(*req, *res); });
                     }

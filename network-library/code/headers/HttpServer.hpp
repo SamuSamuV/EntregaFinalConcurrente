@@ -50,7 +50,6 @@ namespace argb
 
         class RequestHandlerManager
         {
-            // --- VUELVE A USAR VECTOR (Acepta 1 argumento sin error) ---
             using HandlerFactoryContainer = std::vector<HttpRequestHandlerFactory*>;
             HandlerFactoryContainer handler_factories;
 
@@ -78,7 +77,7 @@ namespace argb
     public:
         HttpServer() {}
 
-        // --- FUNCIÓN LIMPIA CON 1 ARGUMENTO (Arregla tu main.cpp) ---
+        // --- 1 ARGUMENTO PARA QUE main.cpp FUNCIONE ---
         void register_handler_factory(HttpRequestHandlerFactory& factory) {
             request_handler_manager.register_handler_factory(factory);
         }
