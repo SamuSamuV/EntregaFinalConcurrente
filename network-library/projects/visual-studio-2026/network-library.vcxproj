@@ -28,6 +28,7 @@
     <ClInclude Include="..\..\code\headers\NetworkException.hpp" />
     <ClInclude Include="..\..\code\headers\TcpListener.hpp" />
     <ClInclude Include="..\..\code\headers\TcpSocket.hpp" />
+    <ClInclude Include="..\..\code\headers\ThreadPool.hpp" />
     <ClInclude Include="..\..\code\headers\UdpSocket.hpp" />
     <ClInclude Include="..\..\code\sources\winsock2\winsock2.hpp" />
   </ItemGroup>

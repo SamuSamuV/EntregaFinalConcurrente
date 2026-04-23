@@ -72,6 +72,9 @@
     <ClInclude Include="..\..\code\headers\HttpRequestHandlerFactory.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\code\headers\ThreadPool.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\code\sources\HttpRequest.cpp">
