@@ -53,7 +53,6 @@ namespace argb
         }
 
     public:
-        // --- 2 PARÁMETROS EXACTOS ---
         virtual bool process(const HttpRequest& request, HttpResponse& response) = 0;
 
         virtual ~HttpRequestHandler() = default;

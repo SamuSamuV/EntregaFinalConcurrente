@@ -131,7 +131,6 @@ namespace argb
                     HttpResponse* res = &context.response;
                     auto* h = &(*context.handler);
 
-                    // --- LLAMADA A PROCESS CON 2 PARÁMETROS EN EL POOL ---
                     if (h->requires_exclusive_thread()) {
                         context.handler_future = thread_pool.enqueue_exclusive(0, [h, req, res]() { return h->process(*req, *res); });
                     }

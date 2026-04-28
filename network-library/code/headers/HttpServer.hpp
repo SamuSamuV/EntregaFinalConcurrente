@@ -77,7 +77,6 @@ namespace argb
     public:
         HttpServer() {}
 
-        // --- 1 ARGUMENTO PARA QUE main.cpp FUNCIONE ---
         void register_handler_factory(HttpRequestHandlerFactory& factory) {
             request_handler_manager.register_handler_factory(factory);
         }

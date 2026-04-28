@@ -62,7 +62,6 @@ namespace argb
         public:
             RequestHandler(LuaServerApplication& server, Endpoint& endpoint) : server(server), endpoint(endpoint) {}
 
-            // --- 2 PARÁMETROS EXACTOS ---
             bool process(const HttpRequest& request, HttpResponse& response) override;
 
             void set_state_finished() { state = State::FINISHED; }
