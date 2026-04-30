@@ -56,6 +56,11 @@ namespace argb
         virtual bool process(const HttpRequest& request, HttpResponse& response) = 0;
 
         virtual ~HttpRequestHandler() = default;
+
+        /**
+         * Permite indicar si el manejador requiere ejecutarse en un hilo exclusivo.
+         * Devuelve false por defecto para que las clases nativas usen la cola general del Thread Pool.
+         */
         virtual bool requires_exclusive_thread() const { return false; }
     };
 }

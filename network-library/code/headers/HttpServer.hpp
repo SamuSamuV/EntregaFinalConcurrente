@@ -38,6 +38,7 @@ namespace argb
             size_t                   response_bytes_sent;
             HttpRequestHandler::Ptr  handler;
 
+            // Variables para el control asincrono de tareas en el Thread Pool
             std::future<bool>        handler_future;
             bool                     handler_task_launched;
 
@@ -71,7 +72,10 @@ namespace argb
         std::atomic<bool>     running{};
         RequestHandlerManager request_handler_manager;
 
+        // Mutex global para proteger el mapa de conexiones de acceso simultaneo por multiples hilos
         std::mutex            connections_mutex;
+
+        // El Thread Pool, con un minimo de 2 hilos para poder separar Lua (1 hilo) y Nativos (1 o más hilos)
         ThreadPool            thread_pool{ std::max<size_t>(2, std::thread::hardware_concurrency()) };
 
     public:

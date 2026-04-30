@@ -14,7 +14,6 @@
 #include "Sqlite.hpp"
 #include <type_traits>
 #include <vector>
-
 #include <thread>
 #include <mutex>
 #include <queue>
@@ -46,7 +45,10 @@ namespace argb
 
         class RequestHandler : public HttpRequestHandler
         {
+            // Maquina de estados para gestionar el avance de la corrutina (Yield/Resume)
             enum class State { NOT_STARTED, RUNNING, FINISHED };
+
+            // Para evitar lecturas sucias durante cambios de contexto en memoria
             std::atomic<State> state{ State::NOT_STARTED };
 
             LuaServerApplication& server;
@@ -68,6 +70,7 @@ namespace argb
             State get_state() const { return state.load(); }
             void set_state_running() { state = State::RUNNING; }
 
+            // Fuerza que esta tarea la asuma obligatoriamente el Hilo 0 del Thread Pool (El unico con VM)
             bool requires_exclusive_thread() const override { return true; }
         };
 

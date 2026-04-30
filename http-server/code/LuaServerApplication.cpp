@@ -8,6 +8,7 @@ namespace argb
 {
     bool LuaServerApplication::RequestHandler::process(const HttpRequest& request, HttpResponse& response)
     {
+        // Maquina de estados: Fase 1. Inicialización de la corrutina
         if (get_state() == State::NOT_STARTED)
         {
             set_state_running();
@@ -28,9 +29,11 @@ namespace argb
                 server.virtual_machine["setmetatable"](request_table, server.virtual_machine["__http_request_metatable"]);
                 server.virtual_machine["setmetatable"](response_table, server.virtual_machine["__http_response_metatable"]);
 
+                // Instanciamos el Coroutine de Lua
                 coro = std::make_shared<lua::Coroutine>(server.virtual_machine, "__async_endpoint_runner");
                 coro->resume(endpoint.unref(), request_table, response_table);
             }
+
             catch (const lua::RuntimeError&)
             {
                 send_plain_text_response(*current_response, 500, "Internal Server Error");
@@ -38,25 +41,33 @@ namespace argb
                 return true;
             }
 
+            // Comportamiento cooperativo: Si la corrutina entro en yield (Ej: timeout o SQL largo), retorna false
             if (coro->isSuspended()) return false;
 
-            if (coro->isError()) {
+            if (coro->isError())
+            {
                 send_plain_text_response(*current_response, 500, "Lua Coroutine Error: " + coro->getLastError());
             }
+
             set_state_finished();
             return true;
         }
+
+        // Fase 2: Reanudacion (resume) desde un estado asincrono
         else if (get_state() == State::RUNNING)
         {
             coro->resume();
 
+            // Si la corrutina vuelve a requerir espera, volvemos a soltar el hilo (return false)
             if (coro->isSuspended()) return false;
 
-            if (coro->isError()) {
+            if (coro->isError())
+            {
                 send_plain_text_response(*current_response, 500, "Lua Coroutine Error: " + coro->getLastError());
             }
+
             set_state_finished();
-            return true;
+            return true; // true notifica al Thread Pool y al servidor que el procesamiento asincrono ha terminado
         }
 
         return true;
@@ -70,6 +81,8 @@ namespace argb
         }
         base_path = std::filesystem::absolute(script_path).parent_path();
         create_lua_bridge();
+
+        // Funcion inyectada en Lua para facilitar la invocación generica del Coroutine
         virtual_machine.doString("function __async_endpoint_runner(endpoint, req, res) endpoint(req, res) end");
         virtual_machine.doFile(script_path.string());
     }

@@ -59,9 +59,6 @@ namespace argb
 
     bool StaticFileServer::StaticFileRequestHandler::send_response (HttpResponse & response)
     {
-        // Aquí se podría implementar la lógica de lectura incremental del archivo y escritura en el cuerpo de la respuesta.
-        // Por simplicidad, por el momento se lee todo el archivo de una vez.
-
         size_t content_length = std::filesystem::file_size (file_path);
 
         std::vector<char> file_content(content_length);

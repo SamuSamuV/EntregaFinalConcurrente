@@ -11,13 +11,15 @@ using std::endl;
 namespace argb
 {
     HttpServer::ConnectionContext::ConnectionContext()
-        : state(RECEIVING_REQUEST), last_activity(now()), request_parser(request), response_bytes_sent(0), handler_task_launched(false) {}
+        : state(RECEIVING_REQUEST), last_activity(now()), request_parser(request), response_bytes_sent(0), handler_task_launched(false) {
+    }
 
     HttpServer::ConnectionContext::ConnectionContext(ConnectionContext&& other) noexcept
         : state(other.state), last_activity(other.last_activity), socket(std::move(other.socket)), request(std::move(other.request))
         , response(std::move(other.response)), request_parser(request), handler(std::move(other.handler))
         , response_bytes_sent(other.response_bytes_sent), handler_future(std::move(other.handler_future))
-        , handler_task_launched(other.handler_task_launched) {}
+        , handler_task_launched(other.handler_task_launched) {
+    }
 
     HttpRequestHandler::Ptr HttpServer::RequestHandlerManager::create_handler(HttpRequest::Method method, std::string_view request_path) const
     {
@@ -36,15 +38,28 @@ namespace argb
             ListenerScopeGuard guard{ listener };
             running = true;
 
+            // Hilo dedicado en exclusiva a la gestión de nuevas conexiones y cierres
             std::thread connection_thread([this]() {
-                while (running) { accept_connections(); close_inactive_connections(); std::this_thread::yield(); }
+                while (running) {
+                    accept_connections();
+                    close_inactive_connections();
+                    std::this_thread::yield();
+                }
                 });
 
+            // Hilo dedicado en exclusiva a la transferencia de datos (lectura y escritura de sockets)
             std::thread io_thread([this]() {
-                while (running) { transfer_data(); std::this_thread::yield(); }
+                while (running) {
+                    transfer_data();
+                    std::this_thread::yield();
+                }
                 });
 
-            while (running) { run_handlers(); std::this_thread::yield(); }
+            // El hilo principal se encarga de supervisar los handlers y derivarlos al Thread Pool
+            while (running) {
+                run_handlers();
+                std::this_thread::yield();
+            }
 
             if (connection_thread.joinable()) connection_thread.join();
             if (io_thread.joinable()) io_thread.join();
@@ -59,15 +74,18 @@ namespace argb
                 ConnectionContext context;
                 context.socket = std::move(*new_socket);
                 context.socket.set_blocking(false);
+
+                // Aplicamos lock_guard para asegurar acceso seguro en memoria al mapa connections
                 std::lock_guard<std::mutex> lock(connections_mutex);
                 connections.emplace(socket_handle, std::move(context));
             }
         }
-        catch (const NetworkException& exception) { cout << "Error: " << exception << endl; }
+        catch (const NetworkException& exception) { cout << "Error accepting new connection: " << exception << endl; }
     }
 
     void HttpServer::transfer_data()
     {
+        // Protegemos el acceso al mapa de conexiones mientras el hilo itera sobre ellas
         std::lock_guard<std::mutex> lock(connections_mutex);
         for (auto& [socket_handle, context] : connections) {
             try {
@@ -123,25 +141,48 @@ namespace argb
 
     void HttpServer::run_handlers()
     {
+        // Protegemos el mapa durante el lanzamiento de handlers
         std::lock_guard<std::mutex> lock(connections_mutex);
-        for (auto& [socket_handle, context] : connections) {
-            if (context.state == ConnectionContext::RUNNING_HANDLER && context.handler) {
-                if (!context.handler_task_launched) {
+
+        for (auto& [socket_handle, context] : connections)
+        {
+            if (context.state == ConnectionContext::RUNNING_HANDLER && context.handler)
+            {
+
+                // Si la tarea aun no ha sido encolada al Thread Pool, la lanzamos
+                if (!context.handler_task_launched)
+                {
                     HttpRequest* req = &context.request;
                     HttpResponse* res = &context.response;
                     auto* h = &(*context.handler);
 
-                    if (h->requires_exclusive_thread()) {
+                    // Comprobamos si la tarea exige exclusividad (VM de Lua) para derivarla al Hilo 0
+                    if (h->requires_exclusive_thread())
+                    {
                         context.handler_future = thread_pool.enqueue_exclusive(0, [h, req, res]() { return h->process(*req, *res); });
                     }
-                    else {
+
+                    else
+                    {
+                        // Tareas nativas van a la cola general y usan std::future
                         context.handler_future = thread_pool.enqueue([h, req, res]() { return h->process(*req, *res); });
                     }
+
                     context.handler_task_launched = true;
                 }
-                else {
+
+                else
+                {
+                    // Verificación no bloqueante (wait_for 0s) para ver si el Thread Pool ya terminó la tarea
                     if (context.handler_future.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
-                        if (context.handler_future.get()) { context.state = ConnectionContext::WRITING_RESPONSE_HEADER; }
+
+                        // Obtenemos el resultado de la corrutina (true si termino del todo, false si hizo yield)
+                        if (context.handler_future.get())
+                        {
+                            context.state = ConnectionContext::WRITING_RESPONSE_HEADER;
+                        }
+
+                        // Marcamos como no lanzada para que el ciclo la vuelva a meter al Pool si no ha terminado
                         context.handler_task_launched = false;
                     }
                 }
@@ -152,17 +193,32 @@ namespace argb
     void HttpServer::close_inactive_connections()
     {
         const auto current_time = now();
+
+        // Bloqueamos el mutex antes de empezar a borrar conexiones del mapa compartido
         std::lock_guard<std::mutex> lock(connections_mutex);
+
         for (auto connection = connections.begin(); connection != connections.end(); ) {
             auto& context = connection->second; bool close = false;
+
             if (context.state == ConnectionContext::CLOSED) { close = true; }
-            else if (current_time - context.last_activity > connection_timeout) {
-                if (!context.handler_task_launched) { close = true; }
+            else if (current_time - context.last_activity > connection_timeout)
+            {
+                // Previene desconexion por timeout si el Thread Pool esta procesando actualmente la tarea
+                if (!context.handler_task_launched)
+                {
+                    cout << "Closing connection " << connection->first << " due to timeout." << endl;
+                    close = true;
+                }
             }
-            if (close) {
+
+            if (close)
+            {
+                // Espera a que termine la tarea pendiente para evitar que la lambda escriba en memoria liberada
                 if (context.handler_task_launched && context.handler_future.valid()) { context.handler_future.wait(); }
-                context.socket.close(); connection = connections.erase(connection);
+                context.socket.close();
+                connection = connections.erase(connection);
             }
+
             else ++connection;
         }
     }
